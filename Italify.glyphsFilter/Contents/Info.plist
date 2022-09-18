@@ -7,21 +7,21 @@
 	<key>CFBundleExecutable</key>
 	<string>plugin</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.eweracs.Italify</string>
+	<string>com.eweracs.italify</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
 	<string>Italify</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1</string> <!-- 1.0 -->
+	<string>1.0</string> <!-- 1.0 -->
 	<key>CFBundleVersion</key>
 	<string>1</string> <!-- 123 -->
 	<key>UpdateFeedURL</key>
-	<string>https://github.com/eweracs/Italify/blob/master/Italify.glyphsPalette/Contents/Info.plist</string>
+	<string>____OnlineUrlToThisPlist____</string>
 	<key>productPageURL</key>
-	<string>https://github.com/eweracs/Italify</string>
+	<string>____ProductPageURL____</string>
 	<key>productReleaseNotes</key>
-	<string>Initial Release</string>
+	<string>____LatestReleaseNotes____</string>
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright, Sebastian Carewe, 2022</string>
 	<key>NSPrincipalClass</key>
