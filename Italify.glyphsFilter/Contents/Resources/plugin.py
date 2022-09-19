@@ -18,7 +18,8 @@ from __future__ import division, print_function, unicode_literals
 import objc
 from GlyphsApp import *
 from GlyphsApp.plugins import *
-from math import sin, cos, tan, radians, pi
+from math import tan, pi, atan2
+from Foundation import NSAffineTransform
 
 
 class Italify(FilterWithDialog):
@@ -31,6 +32,8 @@ class Italify(FilterWithDialog):
 	resetAngleButton = objc.IBOutlet()
 	ratioSlider = objc.IBOutlet()
 	addExtremesCheckBox = objc.IBOutlet()
+
+	select_tool = NSClassFromString("GSToolSelect").alloc().init()
 
 	@objc.python_method
 	def settings(self):
@@ -100,30 +103,61 @@ class Italify(FilterWithDialog):
 		if not inEditView:
 			return False
 
-		self.rotate_layer(rotation_angle, layer)
-		self.slant_layer(slant_angle, layer)
+		for path in layer.paths:
+			# process straight segments
+			node_count = len(path.nodes)
+			for index in range(node_count - 1, 0, -1):
+				node = path.nodes[index]
+				if node.type != "offcurve" and node.nextNode.type != "offcurve":
+					self.transform_straight_segment(angle, layer, path, index)
+
+			node_count = len(path.nodes)
+			# process curved segments
+			for index in range(node_count - 1, 0, -1):
+				node = path.nodes[index]
+				if node.type != "offcurve":
+					if node.nextNode.type == "offcurve" and node.prevNode.type != "offcurve":
+						layer.openCornerAtNode_offset_(node, 10)
+						# transform on-curve node
+						self.rotate_node(path.parent, rotation_angle, node)
+						self.slant_node(path.parent, slant_angle, node)
+						# transform attached off-curve node
+						self.rotate_node(path.parent, rotation_angle, node.nextNode)
+						self.slant_node(path.parent, slant_angle, node.nextNode)
+						self.select_tool._makeCorner_firstNodeIndex_endNodeIndex_(path, index, index + 1)
+					elif node.nextNode.type != "offcurve" and node.prevNode.type == "offcurve":
+						layer.openCornerAtNode_offset_(node, 10)
+						# transform on-curve node
+						self.rotate_node(path.parent, rotation_angle, node)
+						self.slant_node(path.parent, slant_angle, node)
+						# transform attached off-curve node
+						self.rotate_node(path.parent, rotation_angle, node.prevNode)
+						self.slant_node(path.parent, slant_angle, node.prevNode)
+						self.select_tool._makeCorner_firstNodeIndex_endNodeIndex_(path, index, index + 1)
+					elif node.nextNode.type == "offcurve" and node.prevNode.type == "offcurve":
+						# transform on-curve node
+						self.rotate_node(path.parent, rotation_angle, node)
+						self.slant_node(path.parent, slant_angle, node)
+						# transform attached off-curve nodes
+						self.rotate_node(path.parent, rotation_angle, node.prevNode)
+						self.slant_node(path.parent, slant_angle, node.prevNode)
+						self.rotate_node(path.parent, rotation_angle, node.nextNode)
+						self.slant_node(path.parent, slant_angle, node.nextNode)
+
+				# else:
+				# 	self.rotate_node(path.parent, rotation_angle, node)
+				# 	self.slant_node(path.parent, slant_angle, node)
 
 		if add_extremes:
 			layer.addNodesAtExtremes()
 			layer.addExtremePointsForce_(True)
 
 	@objc.python_method
-	def rotate_layer(self, angle, layer):
-		x_center = layer.bounds.origin.x + layer.bounds.size.width / 2
-		y_center = layer.bounds.origin.y + layer.bounds.size.height / 2
-		shift_matrix = [1, 0, 0, 1, -x_center, -y_center]
-		layer.applyTransform(shift_matrix)
-
-		angle_radians = radians(angle)
-		rotation_matrix = [cos(angle_radians), -sin(angle_radians), sin(angle_radians),
-		                   cos(angle_radians), 0, 0]
-		layer.applyTransform(rotation_matrix)
-
-		shift_matrix = [1, 0, 0, 1, x_center, y_center]
-		layer.applyTransform(shift_matrix)
+	def get_slant_rotate_ratio_angle(self, node1, node2):
+		return abs(abs(atan2(node1.position.y - node2.position.y, node1.position.x - node2.position.x) / pi * 2) - 1)
 
 	@objc.python_method
-	def slant_layer(self, angle, layer):
+	def slant_node(self, layer, angle, node):
 		x_center = layer.bounds.origin.x + layer.bounds.size.width / 2
 		y_center = layer.bounds.origin.y + layer.bounds.size.height / 2
 		shift_matrix = [1, 0, 0, 1, -x_center, -y_center]
@@ -133,14 +167,52 @@ class Italify(FilterWithDialog):
 		slant = tan(angle * pi / 180.0)
 		transform.shearXBy_(slant)
 
-		for path in layer.paths:
-			for node in path.nodes:
-				node.position = transform.transformPoint_(node.position)
-		for anchor in layer.anchors:
-			anchor.position = transform.transformPoint_(anchor.position)
+		node.position = transform.transformPoint_(node.position)
 
 		shift_matrix = [1, 0, 0, 1, x_center, y_center]
 		layer.applyTransform(shift_matrix)
+
+	@objc.python_method
+	def rotate_node(self, layer, angle, node):
+		x_center = layer.bounds.origin.x + layer.bounds.size.width / 2
+		y_center = layer.bounds.origin.y + layer.bounds.size.height / 2
+		shift_matrix = [1, 0, 0, 1, -x_center, -y_center]
+		layer.applyTransform(shift_matrix)
+
+		rotate = NSAffineTransform.new()
+		rotate.rotateByDegrees_(-angle)
+		node.position = rotate.transformPoint_(node.position)
+
+		shift_matrix = [1, 0, 0, 1, x_center, y_center]
+		layer.applyTransform(shift_matrix)
+
+	@objc.python_method
+	def transform_straight_segment(self, angle, layer, path, index):
+		layer.openCornerAtNode_offset_(self.return_node_for_index(path.nodes, index - 1), 10)
+		layer.openCornerAtNode_offset_(self.return_node_for_index(path.nodes, index + 1), 10)
+
+		rotation_angle = angle * (1 - self.get_slant_rotate_ratio_angle(self.return_node_for_index(path.nodes,
+		                                                                                           index),
+		                                                                self.return_node_for_index(path.nodes,
+		                                                                                           index + 1)))
+		slant_angle = angle * self.get_slant_rotate_ratio_angle(self.return_node_for_index(path.nodes, index),
+		                                                        self.return_node_for_index(path.nodes, index + 1))
+
+		self.rotate_node(layer, rotation_angle, self.return_node_for_index(path.nodes, index))
+		self.rotate_node(layer, rotation_angle, self.return_node_for_index(path.nodes, index + 1))
+		self.slant_node(layer, slant_angle, self.return_node_for_index(path.nodes, index))
+		self.slant_node(layer, slant_angle, self.return_node_for_index(path.nodes, index + 1))
+
+		self.select_tool._makeCorner_firstNodeIndex_endNodeIndex_(path,
+		                                                          (index + 1) % len(path.nodes),
+		                                                          (index + 2) % len(path.nodes))
+		self.select_tool._makeCorner_firstNodeIndex_endNodeIndex_(path,
+		                                                          (index - 1) % len(path.nodes),
+		                                                          index % len(path.nodes))
+
+	@objc.python_method
+	def return_node_for_index(self, nodes, index):
+		return nodes[index % len(nodes)]
 
 	@objc.python_method
 	def __file__(self):
