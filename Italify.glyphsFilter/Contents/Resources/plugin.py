@@ -108,7 +108,7 @@ class Italify(FilterWithDialog):
 			node_count = len(path.nodes)
 			for index in range(node_count - 1, 0, -1):
 				node = path.nodes[index]
-				if node.type != "offcurve" and node.nextNode.type != "offcurve":
+				if node.type != "offcurve" and node.prevNode.type != "offcurve":
 					self.transform_straight_segment(angle, layer, path, index)
 
 			node_count = len(path.nodes)
