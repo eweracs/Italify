@@ -14,6 +14,8 @@
 #
 ###########################################################################################################
 
+# TODO: Handle paths in cw direction
+
 from __future__ import division, print_function, unicode_literals
 import objc
 from GlyphsApp import *
@@ -31,6 +33,7 @@ class Italify(FilterWithDialog):
 	angleTextBox = objc.IBOutlet()
 	resetAngleButton = objc.IBOutlet()
 	ratioSlider = objc.IBOutlet()
+	distinquishStraightAndCurvedCheckBox = objc.IBOutlet()
 	addExtremesCheckBox = objc.IBOutlet()
 
 	select_tool = NSClassFromString("GSToolSelect").alloc().init()
@@ -80,6 +83,11 @@ class Italify(FilterWithDialog):
 		self.update()
 
 	@objc.IBAction
+	def setDistinquishStraightAndCurved_(self, sender):
+		Glyphs.defaults["com.eweracs.italify.distinquishStraightAndCurved"] = bool(sender.state())
+		self.update()
+
+	@objc.IBAction
 	def setAddExtremes_(self, sender):
 		Glyphs.defaults["com.eweracs.italify.addExtremes"] = bool(sender.state())
 		self.update()
@@ -95,6 +103,7 @@ class Italify(FilterWithDialog):
 	def filter(self, layer, inEditView, customParameters):
 		angle = Glyphs.defaults["com.eweracs.italify.angle"] or 0
 		ratio = Glyphs.defaults["com.eweracs.italify.ratio"] or 0
+		distinquish_straight_and_curved = Glyphs.defaults["com.eweracs.italify.distinquishStraightAndCurved"] or False
 		add_extremes = Glyphs.defaults["com.eweracs.italify.addExtremes"] or False
 
 		rotation_angle = angle * ratio
@@ -104,49 +113,55 @@ class Italify(FilterWithDialog):
 			return False
 
 		for path in layer.paths:
-			# process straight segments
-			node_count = len(path.nodes)
-			for index in range(node_count - 1, 0, -1):
-				node = path.nodes[index]
-				if node.type != "offcurve" and node.prevNode.type != "offcurve":
-					self.transform_straight_segment(angle, layer, path, index)
+			if distinquish_straight_and_curved:
+				# process straight segments
+				node_count = len(path.nodes)
+				for index in range(node_count - 1, 0, -1):
+					node = path.nodes[index]
+					if node.type != "offcurve" and node.prevNode.type != "offcurve":
+						self.transform_straight_segment(angle, layer, path, index)
 
-			node_count = len(path.nodes)
-			# process curved segments
-			for index in range(node_count - 1, 0, -1):
-				node = path.nodes[index]
-				if node.type != "offcurve":
-					if node.nextNode.type == "offcurve" and node.prevNode.type != "offcurve":
-						layer.openCornerAtNode_offset_(node, 10)
-						# transform on-curve node
-						self.rotate_node(path.parent, rotation_angle, node)
-						self.slant_node(path.parent, slant_angle, node)
-						# transform attached off-curve node
-						self.rotate_node(path.parent, rotation_angle, node.nextNode)
-						self.slant_node(path.parent, slant_angle, node.nextNode)
-						self.select_tool._makeCorner_firstNodeIndex_endNodeIndex_(path, index, index + 1)
-					elif node.nextNode.type != "offcurve" and node.prevNode.type == "offcurve":
-						layer.openCornerAtNode_offset_(node, 10)
-						# transform on-curve node
-						self.rotate_node(path.parent, rotation_angle, node)
-						self.slant_node(path.parent, slant_angle, node)
-						# transform attached off-curve node
-						self.rotate_node(path.parent, rotation_angle, node.prevNode)
-						self.slant_node(path.parent, slant_angle, node.prevNode)
-						self.select_tool._makeCorner_firstNodeIndex_endNodeIndex_(path, index, index + 1)
-					elif node.nextNode.type == "offcurve" and node.prevNode.type == "offcurve":
-						# transform on-curve node
-						self.rotate_node(path.parent, rotation_angle, node)
-						self.slant_node(path.parent, slant_angle, node)
-						# transform attached off-curve nodes
-						self.rotate_node(path.parent, rotation_angle, node.prevNode)
-						self.slant_node(path.parent, slant_angle, node.prevNode)
-						self.rotate_node(path.parent, rotation_angle, node.nextNode)
-						self.slant_node(path.parent, slant_angle, node.nextNode)
+				# process curved segments
+				node_count = len(path.nodes)
+				for index in range(node_count - 1, 0, -1):
+					node = path.nodes[index]
+					if node.type != "offcurve":
+						if node.nextNode.type == "offcurve" and node.prevNode.type != "offcurve":
+							layer.openCornerAtNode_offset_(node, 10)
+							# transform on-curve node
+							self.rotate_node(path.parent, rotation_angle, node)
+							self.slant_node(path.parent, slant_angle, node)
+							# transform attached off-curve node
+							self.rotate_node(path.parent, rotation_angle, node.nextNode)
+							self.slant_node(path.parent, slant_angle, node.nextNode)
+							self.select_tool._makeCorner_firstNodeIndex_endNodeIndex_(path, index, index + 1)
+						elif node.nextNode.type != "offcurve" and node.prevNode.type == "offcurve":
+							layer.openCornerAtNode_offset_(node, 10)
+							# transform on-curve node
+							self.rotate_node(path.parent, rotation_angle, node)
+							self.slant_node(path.parent, slant_angle, node)
+							# transform attached off-curve node
+							self.rotate_node(path.parent, rotation_angle, node.prevNode)
+							self.slant_node(path.parent, slant_angle, node.prevNode)
+							self.select_tool._makeCorner_firstNodeIndex_endNodeIndex_(path, index, index + 1)
+						elif node.nextNode.type == "offcurve" and node.prevNode.type == "offcurve":
+							# transform on-curve node
+							self.rotate_node(path.parent, rotation_angle, node)
+							self.slant_node(path.parent, slant_angle, node)
+							# transform attached off-curve nodes
+							self.rotate_node(path.parent, rotation_angle, node.prevNode)
+							self.slant_node(path.parent, slant_angle, node.prevNode)
+							self.rotate_node(path.parent, rotation_angle, node.nextNode)
+							self.slant_node(path.parent, slant_angle, node.nextNode)
 
-				# else:
-				# 	self.rotate_node(path.parent, rotation_angle, node)
-				# 	self.slant_node(path.parent, slant_angle, node)
+			else:
+				for node in path.nodes:
+					self.rotate_node(path.parent, rotation_angle, node)
+					self.slant_node(path.parent, slant_angle, node)
+
+		for anchor in layer.anchors:
+			# slant all anchors
+			self.slant_node(layer, angle, anchor)
 
 		if add_extremes:
 			layer.addNodesAtExtremes()
