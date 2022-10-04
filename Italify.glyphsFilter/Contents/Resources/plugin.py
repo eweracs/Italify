@@ -68,43 +68,43 @@ class Italify(FilterWithDialog):
 
 	@objc.IBAction
 	def setAngleAction_(self, sender):
-		Glyphs.defaults["com.eweracs.italify.angle"] = float(sender.floatValue())
+		Glyphs.defaults["com.eweracs.italify.angle"] = sender.floatValue()
 		self.update()
 
 	@objc.IBAction
 	def resetAngle_(self, sender):
 		Glyphs.defaults["com.eweracs.italify.angle"] = Glyphs.font.selectedLayers[0].master.italicAngle
-		self.angleTextBox.setStringValue_(Glyphs.defaults["com.eweracs.italify.angle"] or "0")
+		self.angleTextBox.setFloatValue_(float(Glyphs.defaults["com.eweracs.italify.angle"] or 0))
 		self.update()
 
 	@objc.IBAction
 	def setRatio_(self, sender):
-		Glyphs.defaults["com.eweracs.italify.ratio"] = float(sender.floatValue())
+		Glyphs.defaults["com.eweracs.italify.ratio"] = sender.floatValue()
 		self.update()
 
 	@objc.IBAction
 	def setDistinquishStraightAndCurved_(self, sender):
-		Glyphs.defaults["com.eweracs.italify.distinquishStraightAndCurved"] = bool(sender.state())
+		Glyphs.boolDefaults["com.eweracs.italify.distinquishStraightAndCurved"] = sender.state()
 		self.update()
 
 	@objc.IBAction
 	def setAddExtremes_(self, sender):
-		Glyphs.defaults["com.eweracs.italify.addExtremes"] = bool(sender.state())
+		Glyphs.boolDefaults["com.eweracs.italify.addExtremes"] = sender.state()
 		self.update()
 
 	@objc.python_method
 	def set_states(self):
-		self.angleTextBox.setStringValue_(Glyphs.defaults["com.eweracs.italify.angle"] or "0")
-		self.ratioSlider.setFloatValue_(Glyphs.defaults["com.eweracs.italify.ratio"] or 0)
-		self.addExtremesCheckBox.setState_(Glyphs.defaults["com.eweracs.italify.addExtremes"] or False)
+		self.angleTextBox.setFloatValue_(float(Glyphs.defaults["com.eweracs.italify.angle"] or 0))
+		self.ratioSlider.setFloatValue_(float(Glyphs.defaults["com.eweracs.italify.ratio"] or 0))
+		self.addExtremesCheckBox.setState_(Glyphs.boolDefaults["com.eweracs.italify.addExtremes"])
 
 	# Actual filter
 	@objc.python_method
 	def filter(self, layer, inEditView, customParameters):
 		angle = Glyphs.defaults["com.eweracs.italify.angle"] or 0
 		ratio = Glyphs.defaults["com.eweracs.italify.ratio"] or 0
-		distinquish_straight_and_curved = Glyphs.defaults["com.eweracs.italify.distinquishStraightAndCurved"] or False
-		add_extremes = Glyphs.defaults["com.eweracs.italify.addExtremes"] or False
+		distinquish_straight_and_curved = Glyphs.boolDefaults["com.eweracs.italify.distinquishStraightAndCurved"]
+		add_extremes = Glyphs.boolDefaults["com.eweracs.italify.addExtremes"]
 
 		rotation_angle = angle * ratio
 		slant_angle = angle * (1 - ratio)
