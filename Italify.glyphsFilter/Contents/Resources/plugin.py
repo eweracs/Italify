@@ -67,14 +67,14 @@ class Italify(FilterWithDialog):
 		self.update()
 
 	@objc.IBAction
-	def setAngle_(self, sender):
+	def setAngleAction_(self, sender):
 		Glyphs.defaults["com.eweracs.italify.angle"] = float(sender.floatValue())
 		self.update()
 
 	@objc.IBAction
 	def resetAngle_(self, sender):
 		Glyphs.defaults["com.eweracs.italify.angle"] = Glyphs.font.selectedLayers[0].master.italicAngle
-		self.angleTextBox.setStringValue_(str(Glyphs.defaults["com.eweracs.italify.angle"]) or "0")
+		self.angleTextBox.setStringValue_(Glyphs.defaults["com.eweracs.italify.angle"] or "0")
 		self.update()
 
 	@objc.IBAction
@@ -94,14 +94,14 @@ class Italify(FilterWithDialog):
 
 	@objc.python_method
 	def set_states(self):
-		self.angleTextBox.setStringValue_(str(Glyphs.defaults["com.eweracs.italify.angle"]) + "°" or "0°")
+		self.angleTextBox.setStringValue_(Glyphs.defaults["com.eweracs.italify.angle"] or "0")
 		self.ratioSlider.setFloatValue_(Glyphs.defaults["com.eweracs.italify.ratio"] or 0)
 		self.addExtremesCheckBox.setState_(Glyphs.defaults["com.eweracs.italify.addExtremes"] or False)
 
 	# Actual filter
 	@objc.python_method
 	def filter(self, layer, inEditView, customParameters):
-		angle = float(Glyphs.defaults["com.eweracs.italify.angle"]) or 0
+		angle = Glyphs.defaults["com.eweracs.italify.angle"] or 0
 		ratio = Glyphs.defaults["com.eweracs.italify.ratio"] or 0
 		distinquish_straight_and_curved = Glyphs.defaults["com.eweracs.italify.distinquishStraightAndCurved"] or False
 		add_extremes = Glyphs.defaults["com.eweracs.italify.addExtremes"] or False
