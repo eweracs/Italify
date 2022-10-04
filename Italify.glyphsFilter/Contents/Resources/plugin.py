@@ -67,7 +67,7 @@ class Italify(FilterWithDialog):
 		self.update()
 
 	@objc.IBAction
-	def setAngle_(self, sender):
+	def setAngleAction_(self, sender):
 		Glyphs.defaults["com.eweracs.italify.angle"] = float(sender.floatValue())
 		self.update()
 

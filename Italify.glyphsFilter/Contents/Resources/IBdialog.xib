@@ -40,7 +40,7 @@
                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                     <connections>
-                        <action selector="setAngle:" target="-2" id="owv-GP-Ovp"/>
+                        <action selector="setAngleAction:" target="-2" id="G8I-Zz-g2B"/>
                     </connections>
                 </textField>
                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="lPQ-Nv-P12">
