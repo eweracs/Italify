@@ -96,6 +96,7 @@ class Italify(FilterWithDialog):
 	def set_states(self):
 		self.angleTextBox.setFloatValue_(float(Glyphs.defaults["com.eweracs.italify.angle"] or 0))
 		self.ratioSlider.setFloatValue_(float(Glyphs.defaults["com.eweracs.italify.ratio"] or 0))
+		self.distinquishStraightAndCurvedCheckBox.setState_(Glyphs.boolDefaults["com.eweracs.italify.distinquishStraightAndCurved"])
 		self.addExtremesCheckBox.setState_(Glyphs.boolDefaults["com.eweracs.italify.addExtremes"])
 
 	# Actual filter
