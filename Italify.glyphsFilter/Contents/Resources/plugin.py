@@ -74,7 +74,7 @@ class Italify(FilterWithDialog):
 	@objc.IBAction
 	def resetAngle_(self, sender):
 		Glyphs.defaults["com.eweracs.italify.angle"] = Glyphs.font.selectedLayers[0].master.italicAngle
-		self.angleTextBox.setStringValue_(Glyphs.defaults["com.eweracs.italify.angle"] or 0)
+		self.angleTextBox.setStringValue_(Glyphs.defaults["com.eweracs.italify.angle"] or "0")
 		self.update()
 
 	@objc.IBAction
@@ -94,7 +94,7 @@ class Italify(FilterWithDialog):
 
 	@objc.python_method
 	def set_states(self):
-		self.angleTextBox.setStringValue_(Glyphs.defaults["com.eweracs.italify.angle"] or 0)
+		self.angleTextBox.setStringValue_(Glyphs.defaults["com.eweracs.italify.angle"] or "0")
 		self.ratioSlider.setFloatValue_(Glyphs.defaults["com.eweracs.italify.ratio"] or 0)
 		self.addExtremesCheckBox.setState_(Glyphs.defaults["com.eweracs.italify.addExtremes"] or False)
 
