@@ -84,12 +84,12 @@ class Italify(FilterWithDialog):
 
 	@objc.IBAction
 	def setDistinquishStraightAndCurved_(self, sender):
-		Glyphs.boolDefaults["com.eweracs.italify.distinquishStraightAndCurved"] = sender.state()
+		Glyphs.boolDefaults["com.eweracs.italify.distinquishStraightAndCurved"] = bool(sender.state())
 		self.update()
 
 	@objc.IBAction
 	def setAddExtremes_(self, sender):
-		Glyphs.boolDefaults["com.eweracs.italify.addExtremes"] = sender.state()
+		Glyphs.boolDefaults["com.eweracs.italify.addExtremes"] = bool(sender.state())
 		self.update()
 
 	@objc.python_method
