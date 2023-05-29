@@ -50,7 +50,7 @@ class Italify(FilterWithDialog):
 			"de": "Anwenden",
 			"fr": "Appliquer",
 			"es": "Aplicar",
-			"pt": "Aplique",
+			"pt": "Apliquer",
 			"jp": "申し込む",
 			"ko": "대다",
 			"zh": "应用",
