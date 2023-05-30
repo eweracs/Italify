@@ -102,16 +102,18 @@ class Italify(FilterWithDialog):
 	# Actual filter
 	@objc.python_method
 	def filter(self, layer, inEditView, customParameters):
-		angle = Glyphs.defaults["com.eweracs.italify.angle"] or 0
-		ratio = Glyphs.defaults["com.eweracs.italify.ratio"] or 0
-		distinquish_straight_and_curved = Glyphs.boolDefaults["com.eweracs.italify.distinquishStraightAndCurved"]
-		add_extremes = Glyphs.boolDefaults["com.eweracs.italify.addExtremes"]
-
+		if inEditView:
+			angle = Glyphs.defaults["com.eweracs.italify.angle"] or 0
+			ratio = Glyphs.defaults["com.eweracs.italify.ratio"] or 0
+			distinquish_straight_and_curved = Glyphs.boolDefaults["com.eweracs.italify.distinquishStraightAndCurved"]
+			add_extremes = Glyphs.boolDefaults["com.eweracs.italify.addExtremes"]
+		else:
+			angle = float(customParameters.get("angle", 0))
+			ratio = float(customParameters.get("ratio", 0))
+			distinquish_straight_and_curved = bool(customParameters.get("smart", False))
+			add_extremes = bool(customParameters.get("extremes", False))
 		rotation_angle = angle * ratio
 		slant_angle = angle * (1 - ratio)
-
-		if not inEditView:
-			return False
 
 		for path in layer.paths:
 			if distinquish_straight_and_curved:
@@ -166,7 +168,7 @@ class Italify(FilterWithDialog):
 
 		if add_extremes:
 			layer.addNodesAtExtremes()
-			layer.addExtremePointsForce_(True)
+			layer.addExtremePointsForce_checkSelection_(True, False)
 
 	@objc.python_method
 	def get_slant_rotate_ratio_angle(self, node1, node2):
@@ -223,6 +225,13 @@ class Italify(FilterWithDialog):
 		self.select_tool._makeCorner_firstNodeIndex_endNodeIndex_(path,
 		                                                          (index - 1) % len(path.nodes),
 		                                                          index % len(path.nodes))
+
+	def customParameterString(self):
+		angle = Glyphs.defaults["com.eweracs.italify.angle"] or 0
+		ratio = Glyphs.defaults["com.eweracs.italify.ratio"] or 0
+		smart = Glyphs.intDefaults["com.eweracs.italify.distinquishStraightAndCurved"]
+		add_extremes = Glyphs.intDefaults["com.eweracs.italify.addExtremes"]
+		return f"Italify;angle:{angle};ratio:{ratio};smart:{smart};extremes:{add_extremes}"
 
 	@objc.python_method
 	def __file__(self):
