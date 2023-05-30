@@ -204,20 +204,18 @@ class Italify(FilterWithDialog):
 
 	@objc.python_method
 	def transform_straight_segment(self, angle, layer, path, index):
-		layer.openCornerAtNode_offset_(self.return_node_for_index(path.nodes, index - 1), 10)
-		layer.openCornerAtNode_offset_(self.return_node_for_index(path.nodes, index + 1), 10)
+		layer.openCornerAtNode_offset_(path.nodeAtIndex_(index - 1), 10)
+		layer.openCornerAtNode_offset_(path.nodeAtIndex_(index + 1), 10)
 
-		rotation_angle = angle * (1 - self.get_slant_rotate_ratio_angle(self.return_node_for_index(path.nodes,
-		                                                                                           index),
-		                                                                self.return_node_for_index(path.nodes,
-		                                                                                           index + 1)))
-		slant_angle = angle * self.get_slant_rotate_ratio_angle(self.return_node_for_index(path.nodes, index),
-		                                                        self.return_node_for_index(path.nodes, index + 1))
+		rotation_angle = angle * (1 - self.get_slant_rotate_ratio_angle(path.nodeAtIndex_(index),
+		                                                                path.nodeAtIndex_(index + 1)))
+		slant_angle = angle * self.get_slant_rotate_ratio_angle(path.nodeAtIndex_(index),
+		                                                        path.nodeAtIndex_(index + 1))
 
-		self.rotate_node(layer, rotation_angle, self.return_node_for_index(path.nodes, index))
-		self.rotate_node(layer, rotation_angle, self.return_node_for_index(path.nodes, index + 1))
-		self.slant_node(layer, slant_angle, self.return_node_for_index(path.nodes, index))
-		self.slant_node(layer, slant_angle, self.return_node_for_index(path.nodes, index + 1))
+		self.rotate_node(layer, rotation_angle, path.nodeAtIndex_(index))
+		self.rotate_node(layer, rotation_angle, path.nodeAtIndex_(index + 1))
+		self.slant_node(layer, slant_angle, path.nodeAtIndex_(index))
+		self.slant_node(layer, slant_angle, path.nodeAtIndex_(index + 1))
 
 		self.select_tool._makeCorner_firstNodeIndex_endNodeIndex_(path,
 		                                                          (index + 1) % len(path.nodes),
@@ -225,10 +223,6 @@ class Italify(FilterWithDialog):
 		self.select_tool._makeCorner_firstNodeIndex_endNodeIndex_(path,
 		                                                          (index - 1) % len(path.nodes),
 		                                                          index % len(path.nodes))
-
-	@objc.python_method
-	def return_node_for_index(self, nodes, index):
-		return nodes[index % len(nodes)]
 
 	@objc.python_method
 	def __file__(self):
