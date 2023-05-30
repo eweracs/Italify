@@ -29,12 +29,7 @@ class Italify(FilterWithDialog):
 	# The NSView object from the User Interface. Keep this here!
 	dialog = objc.IBOutlet()
 
-	# Text field in dialog
-	angleTextBox = objc.IBOutlet()
 	resetAngleButton = objc.IBOutlet()
-	ratioSlider = objc.IBOutlet()
-	distinquishStraightAndCurvedCheckBox = objc.IBOutlet()
-	addExtremesCheckBox = objc.IBOutlet()
 
 	select_tool = NSClassFromString("GSToolSelect").alloc().init()
 
@@ -63,41 +58,16 @@ class Italify(FilterWithDialog):
 	@objc.python_method
 	def start(self):
 		Glyphs.defaults["com.eweracs.italify.angle"] = Glyphs.font.selectedLayers[0].master.italicAngle
-		self.set_states()
 		self.update()
 
 	@objc.IBAction
-	def setAngleAction_(self, sender):
-		Glyphs.defaults["com.eweracs.italify.angle"] = sender.floatValue()
+	def setUpdate_(self, sender):
 		self.update()
 
 	@objc.IBAction
 	def resetAngle_(self, sender):
 		Glyphs.defaults["com.eweracs.italify.angle"] = Glyphs.font.selectedLayers[0].master.italicAngle
-		self.angleTextBox.setFloatValue_(float(Glyphs.defaults["com.eweracs.italify.angle"] or 0))
 		self.update()
-
-	@objc.IBAction
-	def setRatio_(self, sender):
-		Glyphs.defaults["com.eweracs.italify.ratio"] = sender.floatValue()
-		self.update()
-
-	@objc.IBAction
-	def setDistinquishStraightAndCurved_(self, sender):
-		Glyphs.boolDefaults["com.eweracs.italify.distinquishStraightAndCurved"] = bool(sender.state())
-		self.update()
-
-	@objc.IBAction
-	def setAddExtremes_(self, sender):
-		Glyphs.boolDefaults["com.eweracs.italify.addExtremes"] = bool(sender.state())
-		self.update()
-
-	@objc.python_method
-	def set_states(self):
-		self.angleTextBox.setFloatValue_(float(Glyphs.defaults["com.eweracs.italify.angle"] or 0))
-		self.ratioSlider.setFloatValue_(float(Glyphs.defaults["com.eweracs.italify.ratio"] or 0))
-		self.distinquishStraightAndCurvedCheckBox.setState_(Glyphs.boolDefaults["com.eweracs.italify.distinquishStraightAndCurved"])
-		self.addExtremesCheckBox.setState_(Glyphs.boolDefaults["com.eweracs.italify.addExtremes"])
 
 	# Actual filter
 	@objc.python_method

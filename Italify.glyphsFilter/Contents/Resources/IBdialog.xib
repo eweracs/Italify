@@ -1,17 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="21223" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="21225" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="21223"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="21225"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="Italify">
             <connections>
-                <outlet property="addExtremesCheckBox" destination="EYQ-hx-iE9" id="qsV-2s-SpQ"/>
-                <outlet property="angleTextBox" destination="vfg-c5-0Yw" id="gtH-s8-QNT"/>
                 <outlet property="dialog" destination="1" id="RKx-1t-jp1"/>
-                <outlet property="distinquishStraightAndCurvedCheckBox" destination="UjP-j4-kek" id="DSM-b0-Akn"/>
-                <outlet property="ratioSlider" destination="xBg-B2-Onb" id="2DP-xM-E14"/>
                 <outlet property="resetAngleButton" destination="lPQ-Nv-P12" id="fxf-Sm-Xax"/>
             </connections>
         </customObject>
@@ -40,7 +36,8 @@
                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                     <connections>
-                        <action selector="setAngleAction:" target="-2" id="G8I-Zz-g2B"/>
+                        <action selector="setUpdate:" target="-2" id="X0r-u6-t3z"/>
+                        <binding destination="CNr-Jy-8gn" name="value" keyPath="values.com.eweracs.italify.angle" id="MLq-ul-dyC"/>
                     </connections>
                 </textField>
                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="lPQ-Nv-P12">
@@ -65,7 +62,8 @@
                     <rect key="frame" x="61" y="60" width="126" height="28"/>
                     <sliderCell key="cell" continuous="YES" state="on" alignment="left" maxValue="1" tickMarkPosition="above" numberOfTickMarks="11" allowsTickMarkValuesOnly="YES" sliderType="linear" id="Vrc-N9-aVc"/>
                     <connections>
-                        <action selector="setRatio:" target="-2" id="ee6-bc-Po2"/>
+                        <action selector="setUpdate:" target="-2" id="qy9-i4-LlC"/>
+                        <binding destination="CNr-Jy-8gn" name="value" keyPath="values.com.eweracs.italify.ratio" id="fyN-WE-gjI"/>
                     </connections>
                 </slider>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8NQ-z5-ndz">
@@ -83,7 +81,8 @@
                         <font key="font" metaFont="system"/>
                     </buttonCell>
                     <connections>
-                        <action selector="setDistinquishStraightAndCurved:" target="-2" id="vhv-A0-4gp"/>
+                        <action selector="setUpdate:" target="-2" id="T5A-db-6zZ"/>
+                        <binding destination="CNr-Jy-8gn" name="value" keyPath="values.com.eweracs.italify.distinquishStraightAndCurved" id="16Z-1o-7H1"/>
                     </connections>
                 </button>
                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="EYQ-hx-iE9">
@@ -93,7 +92,8 @@
                         <font key="font" metaFont="system"/>
                     </buttonCell>
                     <connections>
-                        <action selector="setAddExtremes:" target="-2" id="qNS-fp-CmY"/>
+                        <action selector="setUpdate:" target="-2" id="ykq-a3-bDn"/>
+                        <binding destination="CNr-Jy-8gn" name="value" keyPath="values.com.eweracs.italify.addExtremes" id="vMs-He-4Vm"/>
                     </connections>
                 </button>
             </subviews>
@@ -131,6 +131,7 @@
             </buttonCell>
             <point key="canvasLocation" x="5" y="157"/>
         </button>
+        <userDefaultsController representsSharedInstance="YES" id="CNr-Jy-8gn"/>
     </objects>
     <resources>
         <image name="NSAddTemplate" width="14" height="13"/>
