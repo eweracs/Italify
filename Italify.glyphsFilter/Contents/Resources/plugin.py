@@ -92,7 +92,7 @@ class Italify(FilterWithDialog):
 				for index in range(node_count - 1, 0, -1):
 					node = path.nodes[index]
 					if node.type != "offcurve" and node.prevNode.type != "offcurve":
-						self.transform_straight_segment(angle, layer, path, index)
+						self.transform_straight_segment(angle, layer, center, path, index)
 
 				# process curved segments
 				node_count = len(path.nodes)
@@ -164,7 +164,7 @@ class Italify(FilterWithDialog):
 		node.position = pos
 
 	@objc.python_method
-	def transform_straight_segment(self, angle, layer, path, index):
+	def transform_straight_segment(self, angle, layer, center, path, index):
 		layer.openCornerAtNode_offset_(path.nodeAtIndex_(index - 1), 10)
 		layer.openCornerAtNode_offset_(path.nodeAtIndex_(index + 1), 10)
 
@@ -173,10 +173,10 @@ class Italify(FilterWithDialog):
 		slant_angle = angle * self.get_slant_rotate_ratio_angle(path.nodeAtIndex_(index),
 		                                                        path.nodeAtIndex_(index + 1))
 
-		self.rotate_node(layer, rotation_angle, path.nodeAtIndex_(index))
-		self.rotate_node(layer, rotation_angle, path.nodeAtIndex_(index + 1))
-		self.slant_node(layer, slant_angle, path.nodeAtIndex_(index))
-		self.slant_node(layer, slant_angle, path.nodeAtIndex_(index + 1))
+		self.rotate_node(center, rotation_angle, path.nodeAtIndex_(index))
+		self.rotate_node(center, rotation_angle, path.nodeAtIndex_(index + 1))
+		self.slant_node(center, slant_angle, path.nodeAtIndex_(index))
+		self.slant_node(center, slant_angle, path.nodeAtIndex_(index + 1))
 
 		self.select_tool._makeCorner_firstNodeIndex_endNodeIndex_(path,
 		                                                          (index + 1) % len(path.nodes),
