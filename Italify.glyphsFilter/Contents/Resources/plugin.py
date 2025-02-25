@@ -20,25 +20,18 @@ from __future__ import division, print_function, unicode_literals
 import objc
 from GlyphsApp import *
 from GlyphsApp.plugins import *
-from math import tan, pi, atan2
+from math import tan, pi, atan2, cos, sin
 from Foundation import NSAffineTransform, NSMakePoint, NSMidX, NSMidY
 
+
 class Italify(FilterWithDialog):
-
-	# The NSView object from the User Interface. Keep this here!
 	dialog = objc.IBOutlet()
-
 	resetAngleButton = objc.IBOutlet()
-
 	select_tool = NSClassFromString("GSToolSelect").alloc().init()
 
 	@objc.python_method
 	def settings(self):
-		self.menuName = Glyphs.localize({
-			"en": "Italify",
-		})
-
-		# Word on Run Button (default: Apply)
+		self.menuName = Glyphs.localize({"en": "Italify"})
 		self.actionButtonLabel = Glyphs.localize({
 			"en": "Apply",
 			"de": "Anwenden",
@@ -49,11 +42,8 @@ class Italify(FilterWithDialog):
 			"ko": "대다",
 			"zh": "应用",
 		})
-
-		# Load dialog from .nib (without .extension)
 		self.loadNib("IBdialog", __file__)
 
-	# On dialog show
 	@objc.python_method
 	def start(self):
 		Glyphs.defaults["com.eweracs.italify.angle"] = Glyphs.font.selectedLayers[0].master.italicAngle
@@ -68,84 +58,99 @@ class Italify(FilterWithDialog):
 		Glyphs.defaults["com.eweracs.italify.angle"] = Glyphs.font.selectedLayers[0].master.italicAngle
 		self.update()
 
-	# Actual filter
 	@objc.python_method
 	def filter(self, layer, inEditView, customParameters):
 		if inEditView:
 			angle = Glyphs.defaults["com.eweracs.italify.angle"] or 0
 			ratio = Glyphs.defaults["com.eweracs.italify.ratio"] or 0
-			distinquish_straight_and_curved = Glyphs.boolDefaults["com.eweracs.italify.distinquishStraightAndCurved"]
+			distinguish_straight_and_curved = Glyphs.boolDefaults["com.eweracs.italify.distinguishStraightAndCurved"]
 			add_extremes = Glyphs.boolDefaults["com.eweracs.italify.addExtremes"]
 		else:
 			angle = float(customParameters.get("angle", 0))
 			ratio = float(customParameters.get("ratio", 0))
-			distinquish_straight_and_curved = bool(customParameters.get("smart", False))
+			distinguish_straight_and_curved = bool(customParameters.get("smart", False))
 			add_extremes = bool(customParameters.get("extremes", False))
+
 		rotation_angle = angle * ratio
 		slant_angle = angle * (1 - ratio)
-		bounds = layer.fastBounds()
+		bounds = layer.bounds
 		center = NSMakePoint(NSMidX(bounds), NSMidY(bounds))
+
 		for path in layer.paths:
-			if distinquish_straight_and_curved:
-				# process straight segments
-				node_count = len(path.nodes)
-				for index in range(node_count - 1, 0, -1):
-					node = path.nodes[index]
-					if node.type != "offcurve" and node.prevNode.type != "offcurve":
-						self.transform_straight_segment(angle, layer, center, path, index)
-
-				# process curved segments
-				node_count = len(path.nodes)
-				for index in range(node_count - 1, 0, -1):
-					node = path.nodes[index]
-					if node.type != "offcurve":
-						if node.nextNode.type == "offcurve" and node.prevNode.type != "offcurve":
-							layer.openCornerAtNode_offset_(node, 10)
-							# transform on-curve node
-							self.rotate_node(center, rotation_angle, node)
-							self.slant_node(center, slant_angle, node)
-							# transform attached off-curve node
-							self.rotate_node(center, rotation_angle, node.nextNode)
-							self.slant_node(center, slant_angle, node.nextNode)
-							self.select_tool._makeCorner_firstNodeIndex_endNodeIndex_(path, index, index + 1)
-						elif node.nextNode.type != "offcurve" and node.prevNode.type == "offcurve":
-							layer.openCornerAtNode_offset_(node, 10)
-							# transform on-curve node
-							self.rotate_node(center, rotation_angle, node)
-							self.slant_node(center, slant_angle, node)
-							# transform attached off-curve node
-							self.rotate_node(center, rotation_angle, node.prevNode)
-							self.slant_node(center, slant_angle, node.prevNode)
-							self.select_tool._makeCorner_firstNodeIndex_endNodeIndex_(path, index, index + 1)
-						elif node.nextNode.type == "offcurve" and node.prevNode.type == "offcurve":
-							# transform on-curve node
-							self.rotate_node(center, rotation_angle, node)
-							self.slant_node(center, slant_angle, node)
-							# transform attached off-curve nodes
-							self.rotate_node(center, rotation_angle, node.prevNode)
-							self.slant_node(center, slant_angle, node.prevNode)
-							self.rotate_node(center, rotation_angle, node.nextNode)
-							self.slant_node(center, slant_angle, node.nextNode)
-
-			else:
-				for node in path.nodes:
-					self.rotate_node(center, rotation_angle, node)
-					self.slant_node(center, slant_angle, node)
+			self.process_path(path, center, angle, rotation_angle, slant_angle, distinguish_straight_and_curved)
 
 		for anchor in layer.anchors:
-			# slant all anchors
 			self.slant_node(center, angle, anchor)
 
 		if add_extremes:
-			layer.addNodesAtExtremes()
-			layer.addExtremePointsForce_checkSelection_(True, False)
-		layer.setNeedUpdateShapes()
+			layer.addExtremePoints()
 
 	@objc.python_method
-	def get_slant_rotate_ratio_angle(self, node1, node2):
-		return abs(abs(atan2(node1.position.y - node2.position.y, node1.position.x - node2.position.x) / pi * 2) - 1)
+	def process_path(self, path, center, angle, rotation_angle, slant_angle, distinguish_straight_and_curved):
+		node_count = len(path.nodes)
+		for i in range(node_count):
+			node = path.nodes[i]
+			prev_node = path.nodes[(i - 1) % node_count]
+			next_node = path.nodes[(i + 1) % node_count]
+
+			if distinguish_straight_and_curved:
+				if node.type != "offcurve":
+					if prev_node.type != "offcurve" and next_node.type != "offcurve":
+						# Straight segment
+						self.process_straight_segment(path, i, center, angle)
+					else:
+						# Curved segment
+						self.process_curved_segment(node, prev_node, next_node, center, rotation_angle, slant_angle)
+			else:
+				self.rotate_node(center, rotation_angle, node)
+				self.slant_node(center, slant_angle, node)
 
 	@objc.python_method
+	def process_straight_segment(self, path, index, center, angle):
+		node = path.nodes[index]
+		next_node = path.nodes[(index + 1) % len(path.nodes)]
+
+		dx = next_node.x - node.x
+		dy = next_node.y - node.y
+
+		# Calculate the segment angle
+		segment_angle = atan2(dy, dx)
+
+		# Convert to degrees and normalize to 0-180 range
+		angle_deg = (segment_angle * 180 / pi) % 180
+
+		# Calculate shear and rotation factors
+		# 0 degrees (horizontal) -> full shear, no rotation
+		# 90 degrees (vertical) -> full rotation, no shear
+		shear_factor = cos(segment_angle)
+		rotation_factor = sin(segment_angle)
+
+		# Apply transformations
+		shear_angle = angle * shear_factor
+		rotation_angle = angle * rotation_factor
+
+		# Apply rotation first
+		self.rotate_node(center, rotation_angle, node)
+		self.rotate_node(center, rotation_angle, next_node)
+
+		# Then apply shear
+		self.slant_node(center, shear_angle, node)
+		self.slant_node(center, shear_angle, next_node)
+
+	@objc.python_method
+	def process_curved_segment(self, node, prev_node, next_node, center, rotation_angle, slant_angle):
+		self.rotate_node(center, rotation_angle, node)
+		self.slant_node(center, slant_angle, node)
+
+		if prev_node.type == "offcurve":
+			self.rotate_node(center, rotation_angle, prev_node)
+			self.slant_node(center, slant_angle, prev_node)
+
+		if next_node.type == "offcurve":
+			self.rotate_node(center, rotation_angle, next_node)
+			self.slant_node(center, slant_angle, next_node)
+
+	objc.python_method
 	def slant_node(self, center, angle, node):
 		transform = NSAffineTransform.new()
 		transform.translateXBy_yBy_(center.x, center.y)
@@ -160,39 +165,16 @@ class Italify(FilterWithDialog):
 		rotate.translateXBy_yBy_(center.x, center.y)
 		rotate.rotateByDegrees_(-angle)
 		rotate.translateXBy_yBy_(-center.x, -center.y)
-		pos = rotate.transformPoint_(node.position)
-		node.position = pos
+		node.position = rotate.transformPoint_(node.position)
 
 	@objc.python_method
-	def transform_straight_segment(self, angle, layer, center, path, index):
-		layer.openCornerAtNode_offset_(path.nodeAtIndex_(index - 1), 10)
-		layer.openCornerAtNode_offset_(path.nodeAtIndex_(index + 1), 10)
-
-		rotation_angle = angle * (1 - self.get_slant_rotate_ratio_angle(path.nodeAtIndex_(index),
-		                                                                path.nodeAtIndex_(index + 1)))
-		slant_angle = angle * self.get_slant_rotate_ratio_angle(path.nodeAtIndex_(index),
-		                                                        path.nodeAtIndex_(index + 1))
-
-		self.rotate_node(center, rotation_angle, path.nodeAtIndex_(index))
-		self.rotate_node(center, rotation_angle, path.nodeAtIndex_(index + 1))
-		self.slant_node(center, slant_angle, path.nodeAtIndex_(index))
-		self.slant_node(center, slant_angle, path.nodeAtIndex_(index + 1))
-
-		self.select_tool._makeCorner_firstNodeIndex_endNodeIndex_(path,
-		                                                          (index + 1) % len(path.nodes),
-		                                                          (index + 2) % len(path.nodes))
-		self.select_tool._makeCorner_firstNodeIndex_endNodeIndex_(path,
-		                                                          (index - 1) % len(path.nodes),
-		                                                          index % len(path.nodes))
-
 	def customParameterString(self):
 		angle = Glyphs.defaults["com.eweracs.italify.angle"] or 0
 		ratio = Glyphs.defaults["com.eweracs.italify.ratio"] or 0
-		smart = Glyphs.intDefaults["com.eweracs.italify.distinquishStraightAndCurved"]
-		add_extremes = Glyphs.intDefaults["com.eweracs.italify.addExtremes"]
+		smart = int(Glyphs.boolDefaults["com.eweracs.italify.distinguishStraightAndCurved"])
+		add_extremes = int(Glyphs.boolDefaults["com.eweracs.italify.addExtremes"])
 		return f"Italify;angle:{angle};ratio:{ratio};smart:{smart};extremes:{add_extremes}"
 
 	@objc.python_method
 	def __file__(self):
-		"""Please leave this method unchanged"""
 		return __file__

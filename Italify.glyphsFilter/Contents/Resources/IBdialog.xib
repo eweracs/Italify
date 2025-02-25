@@ -82,7 +82,7 @@
                     </buttonCell>
                     <connections>
                         <action selector="setUpdate:" target="-2" id="T5A-db-6zZ"/>
-                        <binding destination="CNr-Jy-8gn" name="value" keyPath="values.com.eweracs.italify.distinquishStraightAndCurved" id="16Z-1o-7H1"/>
+                        <binding destination="CNr-Jy-8gn" name="value" keyPath="values.com.eweracs.italify.distinguishStraightAndCurved" id="16Z-1o-7H1"/>
                     </connections>
                 </button>
                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="EYQ-hx-iE9">
