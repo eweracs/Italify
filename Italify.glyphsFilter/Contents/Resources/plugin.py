@@ -20,7 +20,7 @@ from __future__ import division, print_function, unicode_literals
 import objc
 from GlyphsApp import *
 from GlyphsApp.plugins import *
-from math import tan, pi, atan2, cos, sin
+from math import tan, pi, atan2, cos, sin, radians
 from Foundation import NSAffineTransform, NSMakePoint, NSMidX, NSMidY
 
 
@@ -110,6 +110,8 @@ class Italify(FilterWithDialog):
 		node = path.nodes[index]
 		next_node = path.nodes[(index + 1) % len(path.nodes)]
 
+		proxy_segment = [GSNode(node.position), GSNode(next_node.position)]
+
 		dx = next_node.x - node.x
 		dy = next_node.y - node.y
 
@@ -119,15 +121,21 @@ class Italify(FilterWithDialog):
 		# Convert to degrees and normalize to 0-180 range
 		angle_deg = (segment_angle * 180 / pi) % 180
 
+		normalised_angle = abs(angle_deg % 180)
+		if normalised_angle > 90:
+			normalised_angle = 180 - normalised_angle
+
 		# Calculate shear and rotation factors
 		# 0 degrees (horizontal) -> full shear, no rotation
 		# 90 degrees (vertical) -> full rotation, no shear
-		shear_factor = cos(segment_angle)
-		rotation_factor = sin(segment_angle)
+		shear_factor = cos(radians(normalised_angle))
+		rotation_factor = sin(radians(normalised_angle))
 
 		# Apply transformations
 		shear_angle = angle * shear_factor
 		rotation_angle = angle * rotation_factor
+
+		print("Segment angle:", angle_deg, "Shear angle:", shear_angle, "Rotation angle:", rotation_angle)
 
 		# Apply rotation first
 		self.rotate_node(center, rotation_angle, node)
