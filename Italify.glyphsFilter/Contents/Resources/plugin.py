@@ -76,8 +76,17 @@ class Italify(FilterWithDialog):
 		bounds = layer.bounds
 		centre = NSMakePoint(NSMidX(bounds), NSMidY(bounds))
 
+		processed_paths = []
 		for path in layer.paths:
-			self.process_path(path, centre, angle, distinguish_straight_and_curved, rotation_angle, shear_angle)
+			processed_paths.append(self.process_path(path, centre, angle, distinguish_straight_and_curved, rotation_angle, shear_angle))
+
+		if processed_paths:
+			for i in range(len(layer.shapes) - 1, -1, -1):
+				path = layer.shapes[i]
+				if isinstance(path, GSPath):
+					del layer.shapes[i]
+			for processed_path in processed_paths:
+				layer.shapes.append(processed_path)
 
 		for anchor in layer.anchors:
 			anchor.position = self.shear_point(centre, angle, anchor.position)
@@ -89,11 +98,14 @@ class Italify(FilterWithDialog):
 
 	@objc.python_method
 	def process_path(self, path, centre, angle, distinguish_straight_and_curved, rotation_angle, shear_angle):
+		processed_path = None
 		if distinguish_straight_and_curved:
-			self.smart_italify(path, centre, angle, rotation_angle, shear_angle)
-			
+			processed_path = self.smart_italify(path, centre, angle, rotation_angle, shear_angle)
 		else:
 			self.simple_italify(path, centre, rotation_angle, shear_angle)
+
+		if processed_path:
+			return processed_path
 				
 	@objc.python_method
 	def smart_italify(self, path, centre, angle, rotation_angle, shear_angle):
@@ -115,27 +127,53 @@ class Italify(FilterWithDialog):
 
 		proxy_layer = GSLayer()
 		path_list = []
-		for transformed_segment in transformed_segments:
-			if transformed_segment[0] == transformed_segment[1]:
+		for index, transformed_segment in enumerate(transformed_segments):
+
+			# integrate zero segments (duplicate nodes) into previous/next segment
+			if transformed_segment[0] == transformed_segment[-1]:
+				transformed_segment[0] = transformed_segments[index - 1][-1]
+				transformed_segment[-1] = transformed_segments[(index + 1) % len(transformed_segments)][0]
+
+			if (
+					len(transformed_segment) == 2
+					and len(transformed_segments[index - 1]) == 4
+					and len(transformed_segments[(index + 1) % len(transformed_segments)]) == 4
+					and transformed_segment[0] != transformed_segment[-1]
+			):
 				continue
+
 			segment_path = self.make_path_from_segment(transformed_segment)
 			proxy_layer.paths.append(segment_path)
 			path_list.append(segment_path)
 
 		for index in range(len(proxy_layer.paths) - 1):
-			proxy_layer.connectPathsWithNode_andNode_extendPath_(
+			proxy_layer.connectPathsWithNode_andNode_(
 				list(proxy_layer.paths[0].nodes)[-1],
-				proxy_layer.paths[1].nodes[0],
-				True
+				proxy_layer.paths[1].nodes[0]
 			)
-		proxy_layer.connectPathsWithNode_andNode_extendPath_(
+
+		proxy_layer.connectPathsWithNode_andNode_(
 			list((list(proxy_layer.paths)[-1]).nodes)[-1],
-			list(proxy_layer.paths[0].nodes)[0],
-			True
+			list(proxy_layer.paths[0].nodes)[0]
 		)
 
-		for shape in proxy_layer.shapes:
-			path.parent.background.shapes.append(shape)
+		proxy_path = proxy_layer.paths[0]
+
+		# collect oncurve nodes
+		oncurve_nodes = [node for node in proxy_path.nodes if node.type != OFFCURVE]
+
+		# collect nodes that need to be turned into corner again
+		nodes_for_corner = oncurve_nodes[1::2]
+
+		# remove nodes that have an offcurve node before and after them (these are already connected)
+		nodes_for_corner = [node for node in nodes_for_corner if node.prevNode.type != OFFCURVE and node.nextNode.type != OFFCURVE]
+
+		for index, node in enumerate(nodes_for_corner):
+			first_node = proxy_path.nodes.index(node)
+			end_node = proxy_path.nodes.index(node.nextOncurveNode())
+			proxy_path.makeCornerFirstNodeIndex_endNodeIndex_(first_node, end_node)
+
+		return proxy_path
 
 		# Add transformed segments to the background
 		# self.visualise_segments(transformed_segments, path.parent)
