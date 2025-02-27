@@ -80,7 +80,7 @@ class Italify(FilterWithDialog):
 		for path in layer.paths:
 			processed_paths.append(self.process_path(path, centre, angle, distinguish_straight_and_curved, rotation_angle, shear_angle))
 
-		if processed_paths:
+		if len(processed_paths):
 			for i in range(len(layer.shapes) - 1, -1, -1):
 				path = layer.shapes[i]
 				if isinstance(path, GSPath):
@@ -98,14 +98,12 @@ class Italify(FilterWithDialog):
 
 	@objc.python_method
 	def process_path(self, path, centre, angle, distinguish_straight_and_curved, rotation_angle, shear_angle):
-		processed_path = None
 		if distinguish_straight_and_curved:
 			processed_path = self.smart_italify(path, centre, angle, rotation_angle, shear_angle)
 		else:
-			self.simple_italify(path, centre, rotation_angle, shear_angle)
+			processed_path = self.simple_italify(path, centre, rotation_angle, shear_angle)
 
-		if processed_path:
-			return processed_path
+		return processed_path
 				
 	@objc.python_method
 	def smart_italify(self, path, centre, angle, rotation_angle, shear_angle):
@@ -184,6 +182,8 @@ class Italify(FilterWithDialog):
 		for node in path.nodes:
 			node.position = self.rotate_point(centre, rotation_angle, node.position)
 			node.position = self.shear_point(centre, shear_angle, node.position)
+
+		return path
 
 	@objc.python_method
 	def make_path_from_segment(self, segment):
