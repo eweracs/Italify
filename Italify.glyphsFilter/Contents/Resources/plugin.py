@@ -132,13 +132,44 @@ class Italify(FilterWithDialog):
 				transformed_segment[0] = transformed_segments[index - 1][-1]
 				transformed_segment[-1] = transformed_segments[(index + 1) % len(transformed_segments)][0]
 
-			if (
-					len(transformed_segment) == 2
-					and len(transformed_segments[index - 1]) == 4
-					and len(transformed_segments[(index + 1) % len(transformed_segments)]) == 4
-					and transformed_segment[0] != transformed_segment[-1]
-			):
-				continue
+			# integrate segment into adjoining segments if offcurve node of previous or next segment
+			# is at same angle as segment
+			modulo_index = (index + 1) % len(transformed_segments)
+			segment_angle = atan2(transformed_segment[1].y - transformed_segment[0].y, transformed_segment[1].x - transformed_segment[0].x)
+
+			if len(transformed_segment) == 2:
+				
+				previous_segment = transformed_segments[index - 1]
+				next_segment = transformed_segments[modulo_index]
+
+				previous_segment_angle = None
+				next_segment_angle = None
+
+				# Check if current segment has same angle as previous or next segment offcurve (smooth connection)
+				if len(previous_segment) == 4:
+					previous_segment_angle = atan2(
+						previous_segment[-1].y - previous_segment[-2].y,
+						previous_segment[-1].x - previous_segment[-2].x
+					)
+				if len(next_segment) == 4:
+					next_segment_angle = atan2(
+						next_segment[1].y - next_segment[0].y,
+						next_segment[1].x - next_segment[0].x
+					)
+
+				if previous_segment_angle and abs(segment_angle - previous_segment_angle) < 0.01:
+					transformed_segment[0] = previous_segment[-1]
+				if next_segment_angle and abs(segment_angle - next_segment_angle) < 0.01:
+					transformed_segment[-1] = next_segment[0]
+
+				# Check if previous and next segment connecting offcurves are at same angle as each other
+				if (previous_segment_angle
+						and next_segment_angle
+						and abs(previous_segment_angle - next_segment_angle) < 0.02
+				):
+					transformed_segment[0] = previous_segment[-1]
+					transformed_segment[-1] = next_segment[0]
+
 
 			segment_path = self.make_path_from_segment(transformed_segment)
 			proxy_layer.paths.append(segment_path)
@@ -251,8 +282,6 @@ class Italify(FilterWithDialog):
 		for node in path.nodes:
 			if node.type != OFFCURVE:
 				if node.nextNode.type != OFFCURVE:
-					# if node.position == node.nextNode.position:
-					# 	continue
 					segment = [node, node.nextNode]
 					segments.append(segment)
 				if node.nextNode.type == OFFCURVE:
