@@ -222,6 +222,8 @@ class Italify(FilterWithDialog):
 			end_node = path.nodes.index(node.nextOncurveNode())
 			path.makeCornerFirstNodeIndex_endNodeIndex_(first_node, end_node)
 
+		path.nodes[-1].previousOncurveNode().makeNodeFirst()
+
 		return path
 
 	@objc.python_method
