@@ -188,19 +188,8 @@ class Italify(FilterWithDialog):
 
 		proxy_path = proxy_layer.paths[0]
 
-		# collect oncurve nodes
-		oncurve_nodes = [node for node in proxy_path.nodes if node.type != OFFCURVE]
-
-		# collect nodes that need to be turned into corner again
-		nodes_for_corner = oncurve_nodes[1::2]
-
-		# remove nodes that have an offcurve node before and after them (these are already connected)
-		nodes_for_corner = [node for node in nodes_for_corner if node.prevNode.type != OFFCURVE and node.nextNode.type != OFFCURVE]
-
-		for index, node in enumerate(nodes_for_corner):
-			first_node = proxy_path.nodes.index(node)
-			end_node = proxy_path.nodes.index(node.nextOncurveNode())
-			proxy_path.makeCornerFirstNodeIndex_endNodeIndex_(first_node, end_node)
+		# Close all corners
+		proxy_path = self.close_all_corners(proxy_path)
 
 		return proxy_path
 
@@ -213,6 +202,25 @@ class Italify(FilterWithDialog):
 		for node in path.nodes:
 			node.position = self.rotate_point(centre, rotation_angle, node.position)
 			node.position = self.shear_point(centre, shear_angle, node.position)
+
+		return path
+
+	@objc.python_method
+	def close_all_corners(self, path):
+		# collect oncurve nodes
+		oncurve_nodes = [node for node in path.nodes if node.type != OFFCURVE]
+
+		# collect nodes that need to be turned into corner again
+		nodes_for_corner = oncurve_nodes[1::2]
+
+		# remove nodes that have an offcurve node before and after them (these are already connected)
+		nodes_for_corner = [node for node in nodes_for_corner if
+		                    node.prevNode.type != OFFCURVE and node.nextNode.type != OFFCURVE]
+
+		for index, node in enumerate(nodes_for_corner):
+			first_node = path.nodes.index(node)
+			end_node = path.nodes.index(node.nextOncurveNode())
+			path.makeCornerFirstNodeIndex_endNodeIndex_(first_node, end_node)
 
 		return path
 
