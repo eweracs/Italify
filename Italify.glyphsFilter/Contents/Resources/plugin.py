@@ -176,26 +176,22 @@ class Italify(FilterWithDialog):
 			path_list.append(segment_path)
 
 		for index in range(len(proxy_layer.paths) - 1):
-			proxy_layer.connectPathsWithNode_andNode_(
-				list(proxy_layer.paths[0].nodes)[-1],
-				proxy_layer.paths[1].nodes[0]
-			)
-
-		proxy_layer.connectPathsWithNode_andNode_(
-			list((list(proxy_layer.paths)[-1]).nodes)[-1],
-			list(proxy_layer.paths[0].nodes)[0]
-		)
+			for index, node in enumerate(proxy_layer.paths[1].nodes):
+				# if index == 0 and node.position == proxy_layer.paths[0].nodes[-1].position:
+				# 	continue
+				proxy_layer.paths[0].nodes.append(node)
+			proxy_layer.shapes.remove(proxy_layer.paths[1])
 
 		proxy_path = proxy_layer.paths[0]
+		proxy_path.closed = True
 
 		# Close all corners
 		proxy_path = self.close_all_corners(proxy_path)
 
-		return proxy_path
-
 		# Add transformed segments to the background
 		# self.visualise_segments(transformed_segments, path.parent)
 
+		return proxy_path
 
 	@objc.python_method
 	def simple_italify(self, path, centre, rotation_angle, shear_angle):
