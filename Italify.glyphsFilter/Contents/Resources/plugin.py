@@ -177,13 +177,14 @@ class Italify(FilterWithDialog):
 
 		for index in range(len(proxy_layer.paths) - 1):
 			for index, node in enumerate(proxy_layer.paths[1].nodes):
-				# if index == 0 and node.position == proxy_layer.paths[0].nodes[-1].position:
-				# 	continue
+				if index == 0 and node.position == proxy_layer.paths[0].nodes[-1].position:
+					continue
 				proxy_layer.paths[0].nodes.append(node)
 			proxy_layer.shapes.remove(proxy_layer.paths[1])
 
 		proxy_path = proxy_layer.paths[0]
 		proxy_path.closed = True
+		proxy_path.nodes.remove(proxy_path.nodes[-1].nextOncurveNode())
 
 		# Close all corners
 		proxy_path = self.close_all_corners(proxy_path)
@@ -212,11 +213,6 @@ class Italify(FilterWithDialog):
 		# remove nodes that have an offcurve node before and after them (these are already connected)
 		nodes_for_corner = [node for node in nodes_for_corner if
 		                    node.prevNode.type != OFFCURVE and node.nextNode.type != OFFCURVE]
-
-		for index, node in enumerate(nodes_for_corner):
-			first_node = path.nodes.index(node)
-			end_node = path.nodes.index(node.nextOncurveNode())
-			path.makeCornerFirstNodeIndex_endNodeIndex_(first_node, end_node)
 
 		path.nodes[-1].previousOncurveNode().makeNodeFirst()
 
