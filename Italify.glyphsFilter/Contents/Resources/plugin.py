@@ -176,18 +176,32 @@ class Italify(FilterWithDialog):
 			path_list.append(segment_path)
 
 		for index in range(len(proxy_layer.paths) - 1):
+
+			# count the number of nodes in the first path
+			original_path_node_count = len(proxy_layer.paths[0].nodes)
+
+			# Iterate over the nodes of the second path to attach
 			for index, node in enumerate(proxy_layer.paths[1].nodes):
+				# Skip the first node if it is the same as the last node of the first path
 				if index == 0 and node.position == proxy_layer.paths[0].nodes[-1].position:
 					continue
+
+				# copy the second path's nodes to the first one
 				proxy_layer.paths[0].nodes.append(node)
+
+			# remove the path which was copied to the first path from the layer
 			proxy_layer.shapes.remove(proxy_layer.paths[1])
+
+			# make a corner at the new connection
+			proxy_layer.paths[0].makeCornerFirstNodeIndex_endNodeIndex_(
+				original_path_node_count - 1,
+				original_path_node_count
+			)
 
 		proxy_path = proxy_layer.paths[0]
 		proxy_path.closed = True
 		proxy_path.nodes.remove(proxy_path.nodes[-1].nextOncurveNode())
-
-		# Close all corners
-		proxy_path = self.close_all_corners(proxy_path)
+		proxy_path.nodes[-1].previousOncurveNode().makeNodeFirst()
 
 		# Add transformed segments to the background
 		# self.visualise_segments(transformed_segments, path.parent)
@@ -199,22 +213,6 @@ class Italify(FilterWithDialog):
 		for node in path.nodes:
 			node.position = self.rotate_point(centre, rotation_angle, node.position)
 			node.position = self.shear_point(centre, shear_angle, node.position)
-
-		return path
-
-	@objc.python_method
-	def close_all_corners(self, path):
-		# collect oncurve nodes
-		oncurve_nodes = [node for node in path.nodes if node.type != OFFCURVE]
-
-		# collect nodes that need to be turned into corner again
-		nodes_for_corner = oncurve_nodes[1::2]
-
-		# remove nodes that have an offcurve node before and after them (these are already connected)
-		nodes_for_corner = [node for node in nodes_for_corner if
-		                    node.prevNode.type != OFFCURVE and node.nextNode.type != OFFCURVE]
-
-		path.nodes[-1].previousOncurveNode().makeNodeFirst()
 
 		return path
 
