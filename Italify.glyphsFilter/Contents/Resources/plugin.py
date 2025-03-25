@@ -200,7 +200,15 @@ class Italify(FilterWithDialog):
 
 		proxy_path = proxy_layer.paths[0]
 		proxy_path.closed = True
-		proxy_path.nodes.remove(proxy_path.nodes[-1].nextOncurveNode())
+
+		first_node = proxy_path.nodes[-1]
+
+		if first_node.prevNode.type == OFFCURVE or first_node.nextNode.type == OFFCURVE:
+			proxy_path.nodes.remove(proxy_path.nodes[-1].nextOncurveNode())
+			print("OFFCURVE FOUND")
+		else:
+			proxy_path.makeCornerFirstNodeIndex_endNodeIndex_(-1, 0)
+
 		proxy_path.nodes[-1].previousOncurveNode().makeNodeFirst()
 
 		# Add transformed segments to the background
