@@ -135,7 +135,10 @@ class Italify(FilterWithDialog):
 			# integrate segment into adjoining segments if offcurve node of previous or next segment
 			# is at same angle as segment
 			modulo_index = (index + 1) % len(transformed_segments)
-			segment_angle = atan2(transformed_segment[1].y - transformed_segment[0].y, transformed_segment[1].x - transformed_segment[0].x)
+			segment_angle = atan2(
+				transformed_segment[1].y - transformed_segment[0].y,
+				transformed_segment[1].x - transformed_segment[0].x
+			)
 
 			if len(transformed_segment) == 2:
 				
@@ -175,6 +178,7 @@ class Italify(FilterWithDialog):
 			proxy_layer.paths.append(segment_path)
 			path_list.append(segment_path)
 
+		# iterate over all segments (which are all separate paths) to connect them into one path
 		for index in range(len(proxy_layer.paths) - 1):
 
 			# count the number of nodes in the first path
@@ -198,14 +202,16 @@ class Italify(FilterWithDialog):
 				original_path_node_count
 			)
 
+		# Close the path
 		proxy_path = proxy_layer.paths[0]
 		proxy_path.closed = True
 
+		# check the type of connection at the first node and either make corner (straight segments) or remove
+		# duplicate nodes (curved segment on either side)
 		first_node = proxy_path.nodes[-1]
 
 		if first_node.prevNode.type == OFFCURVE or first_node.nextNode.type == OFFCURVE:
 			proxy_path.nodes.remove(proxy_path.nodes[-1].nextOncurveNode())
-			print("OFFCURVE FOUND")
 		else:
 			proxy_path.makeCornerFirstNodeIndex_endNodeIndex_(-1, 0)
 
