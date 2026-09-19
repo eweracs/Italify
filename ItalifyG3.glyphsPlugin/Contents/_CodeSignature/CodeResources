@@ -6,11 +6,15 @@
 	<dict>
 		<key>Resources/IBdialog.nib</key>
 		<data>
-		A/Xz9gOY8RaLKFP/AN7c8pT8Ab8=
+		ufTxrxgWTQw2jhncTUNTtSy5hyE=
 		</data>
 		<key>Resources/ToolbarIconTemplate.pdf</key>
 		<data>
 		aMM1r9SEl03uUtR+inja/6DlKho=
+		</data>
+		<key>Resources/WhatsNew.md</key>
+		<data>
+		H4H+0X89sn24d6g3PPzxTywTszo=
 		</data>
 	</dict>
 	<key>files2</key>
@@ -19,7 +23,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			CQWvyfIkz8badO2AL00B2OZ5x0YfrFuowc1/rn3FX0s=
+			Sybd8lrObjTkNA4/iZWHARrsoA2i66c+Y4txVjRc7q0=
 			</data>
 		</dict>
 		<key>Resources/ToolbarIconTemplate.pdf</key>
@@ -27,6 +31,13 @@
 			<key>hash2</key>
 			<data>
 			WfUPQ4ddHyWr0ziwNvMIyiwprV5JtOvI/bE2Bbjoyco=
+			</data>
+		</dict>
+		<key>Resources/WhatsNew.md</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			b1tK3eGQt66iPzAjI4wKGQ52VYBmAQR+orAqTpyr+Gk=
 			</data>
 		</dict>
 	</dict>
