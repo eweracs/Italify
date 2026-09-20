@@ -17,6 +17,22 @@ See RELEASING.md.
 
 ## [Unreleased]
 
+## [0.29.1] – 2026-09-20
+
+### Added
+
+- **Export filter with master licences.** With master credits, the
+  *Filter* custom parameter now also runs on interpolated instances – as
+  long as every master the instance is interpolated from is activated.
+
+### Fixed
+
+- **Per-master parameters at export.** Parameters saved for a master, a
+  group in one master or a layer are now interpolated when an instance
+  between masters is exported. Before, they were ignored.
+- **Curve extension and terminal settings at export.** These are now
+  interpolated for instances between masters, too.
+
 ## [0.29.0] – 2026-09-20
 
 ### Added
