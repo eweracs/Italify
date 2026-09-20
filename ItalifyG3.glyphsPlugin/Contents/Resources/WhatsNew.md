@@ -17,6 +17,33 @@ See RELEASING.md.
 
 ## [Unreleased]
 
+## [0.29.0] – 2026-09-20
+
+### Added
+
+- **Arrow keys for curve extension and terminal settings.** Click a
+  control in the Italify Tagger to select it, then press ↑ or ↓ to
+  change its value by 1 % – or by 10 % with Shift. A selected curve
+  extension control shows its percentage.
+- **Terminal settings also in upright sources.** If the slant angle is
+  0° (e.g. when the angle lock is on and an upright master is selected),
+  a selected terminal now still allows for angle and position control.
+
+### Changed
+
+- **The preview panel shows the locked angle.** With the angle lock on,
+  the Space + Shift preview panel shows the angle the preview really
+  uses – the layer’s own – marked with a padlock.
+
+### Fixed
+
+- **Terminal position on open corners.** A terminal drawn with open
+  corners now follows *Keep terminals → Position* – the filter’s and its
+  own – like any other terminal.
+- **Doubled nodes.** A terminal whose corners are doubled nodes now
+  also shows angle and position controls. The same is fixed for curve
+  extension settings.
+
 ## [0.28.0] – 2026-09-20
 
 ### Added
