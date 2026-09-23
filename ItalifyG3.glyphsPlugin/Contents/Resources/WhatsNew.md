@@ -17,6 +17,42 @@ See RELEASING.md.
 
 ## [Unreleased]
 
+## [0.30.0] – 2026-09-23
+
+### Added
+
+- **Display the licence owner** *Settings and Licences… →
+  Licences* now shows whom each licence code is issued to, in case you
+  are using licences stemming from different buyers.
+
+### Changed
+
+- **Stems are now called Diagonals.** To avoid confusion with the stems in
+  *Font Info → Masters* and to make the intention clearer, menus, messages,
+  settings and the handbook now say *Diagonal* instead of *Stem*. This also
+  makes *Stem compensation* clearer, since this corrects the weight loss in 
+  vertical stems. **Note:** the underlying userData tags will automatically
+  update to use the new naming. Using an older version of Italify later will
+  not work anymore.
+- **Python API renamed to match.** Scripts need updating: `add_stem`
+  is now `add_diagonal`, `stem_id` is `diagonal_id`, `ItalifyStem` is
+  `ItalifyDiagonal`, the `stems=` keywords are `diagonals=`, and so on –
+  see the Python API reference. There are no aliases for the old names.
+- **Add Diagonal is D.** The shortcut moved from S to D along with the
+  name. A shortcut you customised in Settings is kept.
+
+### Fixed
+
+- **A purchased time pass no longer reads “Trial”.** The filter window
+  labelled a bought pass “Trial until …”; it now says “Full licence
+  until …”. Actual trials still say “Trial until …”.
+- **Terminals stay on the sides you tag.** Terminals on segments next to
+  each other resulted in an extra terminal being written on the joining
+  segment. Old terminal tags still work, only re-tag if necessary.
+- **Short straights between inflecting curves stay smooth.** A very short
+  straight segment between two smooth curves with an inflection on at 
+  least one side could collapse and leave a kink on each side.
+
 ## [0.29.1] – 2026-09-20
 
 ### Added
