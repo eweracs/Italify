@@ -2,7 +2,7 @@
 
 The End User Licence Agreement for Italify. It is short on purpose: what you may do, what you may not, and what the plugin sends home.
 
-Copyright © 2026 Sebastian Carewe. All rights reserved. Last updated 5 September 2026.
+Copyright © 2026 Sebastian Carewe. All rights reserved. Last updated 28 September 2026.
 
 Italify (the “Software”, comprising the Glyphs plugin bundle and its documentation) is commercial, proprietary software. It is licensed, not sold. By downloading, installing or using the Software, or by purchasing a licence, you agree to these terms.
 
@@ -12,6 +12,7 @@ Subject to these terms, Sebastian Carewe (the “Licensor”) grants you a non-e
 
 - **Master credits** entitle you to activate the corresponding number of font masters. An activated master may be processed with the Software without time limit.
 - **Time passes** entitle you to process any number of masters for the stated period, counted from the moment the code is entered.
+- **Automatically renewing time passes** (subscriptions) run from the day of payment and renew at the end of each period (a month or a year), at the price agreed at purchase, until the renewal is cancelled. You can cancel at any time; the pass then ends with the period already paid for. The Software confirms such a pass with the licence server and needs to reach it at least once every 31 days to keep working.
 - **Trial codes** entitle you to evaluate the full Software for the stated period, free of charge, once per Mac.
 
 Fonts and other works you produce with the Software are yours; this agreement places no restrictions on them.
@@ -24,12 +25,13 @@ When a licence code is entered, the Software registers the Mac with the Licensor
 
 ## 3. What the Software sends
 
-The Software makes exactly two kinds of connection to the licence server, both to `italify-trial.file-manager-bot.workers.dev`:
+The Software makes exactly three kinds of connection to the licence server, all to `italify-trial.file-manager-bot.workers.dev`:
 
-- when you enter a licence code, and
-- once a day when the filter dialog is opened, to keep the registration current.
+- when you enter a licence code;
+- once a day when the filter dialog or the licence settings are opened, to keep the registration current and, for an automatically renewing pass, to confirm it (hourly while one is about to lapse or has just lapsed); and
+- when you choose *Manage Renewal…*, to fetch a link to your renewal’s payment portal.
 
-Each request carries the licence code, a hashed identifier derived from the Mac’s hardware UUID (the UUID itself never leaves the Mac), the Glyphs major version and the plugin version. No font data, file names, glyph names or personal data beyond what is in the code are transmitted. The licence server stores these values together with the time of registration and processes them only to enforce the seat allowance and to support you. Purchases are processed by Stripe under its own terms; the Licensor receives the buyer’s name, email address and billing address for invoicing, as required by law.
+Each request carries the licence code, a hashed identifier derived from the Mac’s hardware UUID (the UUID itself never leaves the Mac), the Glyphs major version and the plugin version. No font data, file names, glyph names or personal data beyond what is in the code are transmitted. The licence server stores these values together with the time of registration and processes them only to enforce the seat allowance and to support you. Purchases and subscription renewals are processed by Stripe under its own terms; the Licensor receives the buyer’s name, email address and billing address for invoicing, as required by law.
 
 ## 4. Restrictions
 
