@@ -17,6 +17,31 @@ See RELEASING.md.
 
 ## [Unreleased]
 
+## [0.31.0] – 2026-09-28
+
+### Added
+
+- **Control over terminal detection.** *Settings and Licences… →
+  Advanced* has two new options: **Auto-detect terminals** and **Only
+  detect non-orthogonal terminals**. Previously, terminals were always
+  auto-detected. The `Filter` parameter takes both too, as
+  `autoDetectTerminals:` and `nonOrthogonalTerminalsOnly:`.
+- **Year passes and automatic renewal.** A one-year pass joins the time
+  passes, and month and year passes can now renew automatically: you
+  enter the code once, and renewals reach Italify by themselves as long
+  as your Mac goes online once a month. *Settings and Licences… →
+  Licences* shows when the pass renews; *Manage Renewal…* cancels it.
+
+### Fixed
+
+- **Terminals with duplicate nodes are now marked.** A terminal the
+  filter found by itself was not drawn in green when its corners carried
+  duplicate nodes, and *Toggle Terminal* could not switch it off. Both
+  now work like on any other terminal.
+- **Anchors on such terminals follow them.** An anchor linked to a
+  corner of a terminal with duplicate nodes now correctly follows the
+  transformation as well.
+
 ## [0.30.0] – 2026-09-23
 
 ### Added
