@@ -17,6 +17,32 @@ See RELEASING.md.
 
 ## [Unreleased]
 
+## [0.32.0] – 2026-09-29
+
+### Added
+
+- **Short licence keys.** Your licence now has a short key like
+  `ITFY-XXXX-XXXX`. You can enter it in *Settings and
+  Licences… → Licences*, once per Mac. Your purchases are all linked
+  to this licence, so you are not required to enter a new licence code
+  if you buy more credits. Long licence codes from older emails still
+  work in the same field, and your key is shown there for copying.
+- **Add to your licence.** When you buy more credits or another pass,
+  enter your key on the Buy page, and the purchase is added to your
+  licence. Your device picks it up by itself within a day, or you can
+  use the *Refresh* button.
+- **Start a pass only when you’re ready.** Time passes no longer start
+  the moment you enter the code. Use *Start Pass…* in *Settings and
+  Licences… → Licences* (or in the filter dialogue when a master is
+  locked) to explicitly start a time pass. **Started on one Mac, it
+  runs on all Macs/seats registered to that licence.**
+
+### Changed
+
+- **Time passes stack.** A time pass started while another is still
+  running begins when that one ends, so no days are lost. A Mac added to
+  your licence in the middle of a pass gets the rest of it.
+
 ## [0.31.0] – 2026-09-28
 
 ### Added
