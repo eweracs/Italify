@@ -17,6 +17,33 @@ See RELEASING.md.
 
 ## [Unreleased]
 
+## [0.33.0] – 2026-10-12
+
+### Added
+
+- **French and German localisation.** Italify now speaks
+  another proper language, and French. If you would like to assist in
+  the translation of another language, please get in touch. You will
+  receive **one free master credit** as thanks.
+
+### Changed
+
+- **Free trials last a week.** A trial from the website now runs for
+  one week from when you enter its key, instead of 48 hours.
+- **Y-Snap is no longer automatic.** Italify no longer applies the Y-snap
+  tag automatically, since this made no practical difference and only led 
+  to more problems instead. The *Keep line-to-curve corners on metrics*
+  setting is gone. You can still set Y-snap tags yourself, of course.
+
+### Fixed
+
+- **Entering a licence code for a pass you haven’t started** now
+  confirms what it added, instead of an empty “Added .”.
+- **The Space + Shift preview follows *Generate from*.** A layer
+  generated from another master or layer is now previewed from that
+  source, the way the filter builds it, and the preview panel names the
+  source at the top.
+
 ## [0.32.0] – 2026-09-29
 
 ### Added
