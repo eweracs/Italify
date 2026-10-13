@@ -17,6 +17,14 @@ See RELEASING.md.
 
 ## [Unreleased]
 
+## [0.33.1] – 2026-10-13
+
+### Fixed
+
+- **Intermediate layers of activated masters work.** An intermediate
+  layer previously failed to show as activated when its master was.
+  This is now fixed.
+
 ## [0.33.0] – 2026-10-12
 
 ### Added
