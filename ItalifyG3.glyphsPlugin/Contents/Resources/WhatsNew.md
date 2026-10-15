@@ -17,6 +17,27 @@ See RELEASING.md.
 
 ## [Unreleased]
 
+## [0.34.0] – 2026-10-15
+
+### Added
+
+- **Better edge selection for diagonals.** Selecting diagonals is now
+  easier, with clearer highlighting.
+- **Auto-link specific anchors.** *Glyph → Italify →
+  Auto-Link Anchors* now has a submenu: *All* (previous behaviour), and
+  *Define…* lets you tick which anchors of the selected glyphs to link.
+
+### Changed
+
+- **Hinges and anchored edges for several diagonals at once.** Select
+  corners of several diagonals and press H (or A) once to toggle all of
+  them.
+
+### Fixed
+
+- **The Python API installs with the plugin.** `import italify` failed
+  on a fresh install from the Plugin Manager.
+
 ## [0.33.1] – 2026-10-13
 
 ### Fixed
