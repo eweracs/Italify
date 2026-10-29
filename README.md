@@ -7,7 +7,7 @@ introduces, so a slanted master becomes a starting point you can actually
 work with.
 
 - **Website & interactive demos:** [sebastiancarewe.com/italify](https://www.sebastiancarewe.com/italify)
-- **Pricing:** [sebastiancarewe.com/italify/pricing](https://www.sebastiancarewe.com/italify/pricing)
+- **Licensing:** [sebastiancarewe.com/italify/buy](https://www.sebastiancarewe.com/italify/buy)
 - **Handbook:** [sebastiancarewe.com/italify/handbook](https://www.sebastiancarewe.com/italify/handbook)
 - **Python API:** [sebastiancarewe.com/italify/python-api](https://www.sebastiancarewe.com/italify/python-api)
 
@@ -20,14 +20,14 @@ Italify is automatically updated through the plugin manager.
 
 Italify requires **Glyphs 3.2 or later.**
 
-## License
+## Licence
 
-Italify is commercial software and requires a license code —
+Italify is commercial software and requires a licence code —
 per-master credits or a time pass, see
-[pricing](https://www.sebastiancarewe.com/italify/pricing). Not sure yet?
-[Try it free for 48 hours](https://www.sebastiancarewe.com/italify/trial).
+[pricing](https://www.sebastiancarewe.com/italify/buy). Not sure yet?
+[Try it free for one week](https://www.sebastiancarewe.com/italify/trial).
 
-Use is governed by the [license terms](LICENSE.md).
+Use is governed by the [licence terms](LICENSE.md).
 
 ## Support
 
