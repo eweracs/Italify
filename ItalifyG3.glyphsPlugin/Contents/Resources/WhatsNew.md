@@ -17,6 +17,36 @@ See RELEASING.md.
 
 ## [Unreleased]
 
+## [0.35.0] – 2026-11-19
+
+### Added
+
+- **Choose what anchors auto-link to.** *Settings and Licences… →
+  Advanced* has a new *Auto-link anchors to* row: smooth curve nodes,
+  corner nodes, path intersections and the closest curve intersection.
+  Untick the kinds *Auto-Link Anchors* should leave alone.
+- **Link to the Handbook.** The Glyph ▸ Italify menu and the filter window’s
+  gear menu now open the Italify handbook in your browser.
+- **Tip when diagonals aren’t added yet.** Diagonal correction only works on
+  diagonals you have added in the Italify Tagger. To make this clearer, a
+  popup now warns when no diagonals are found.
+- **Spanish localisation.** Italify now también habla español. ¡Gracias,
+  Federico Parra Barrios!
+
+### Changed
+
+- **Auto-Link Anchors finds path intersections.** An anchor sitting on the
+  crossing of two paths now links to that crossing.
+- **Edges of diagonals with offcurve nodes can be anchored.** Previously,
+  only edges made up of a single line segment were allowed. Now edges with
+  offcurve points are also allowed for anchoring.
+
+### Fixed
+
+- **Duplicate node edge case fixes.** Corners with multiple collapsed
+  nodes that include offcurve nodes are now also treated as single points,
+  not as (zero) curve segments.
+
 ## [0.34.0] – 2026-10-15
 
 ### Added

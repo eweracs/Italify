@@ -14,13 +14,13 @@
 		</data>
 		<key>Resources/WhatsNew.md</key>
 		<data>
-		dnsw9kBxMejQ6/OQ8q8Rtj+bp+M=
+		iOMCggchhRdlNQrU4RMp/FcAf5o=
 		</data>
 		<key>Resources/de.lproj/Localizable.strings</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			TDzWc8rKmIxp+pv7jqsvLS0FaP8=
+			I210iIuGHia+hHB0cH9NH84JPzE=
 			</data>
 			<key>optional</key>
 			<true/>
@@ -38,7 +38,7 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			uoL4HOU1lZZ/x4PqFC4x5TNrEVs=
+			E3/bPNJiTPP/qjiQWQEZbO4IWWk=
 			</data>
 			<key>optional</key>
 			<true/>
@@ -52,11 +52,29 @@
 			<key>optional</key>
 			<true/>
 		</dict>
+		<key>Resources/es.lproj/Localizable.strings</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			0R45bLFq4cZWuGDTyJrYrKb2K6k=
+			</data>
+			<key>optional</key>
+			<true/>
+		</dict>
+		<key>Resources/es.lproj/Localizable.stringsdict</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			fZY9Db/5jbxEVJ/hKNmCfG6EK14=
+			</data>
+			<key>optional</key>
+			<true/>
+		</dict>
 		<key>Resources/fr.lproj/Localizable.strings</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			sUn3jUICmpXBf8i48/YIVjBQLlQ=
+			g5498c29BTVQxC2dfljqZbhDBEE=
 			</data>
 			<key>optional</key>
 			<true/>
@@ -91,14 +109,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			NpFiuKtBzibnlxOrtan2lS+OgDB4k8oG+w0zwP+aASA=
+			hApul35p8GDNFzvVScCMLWJ5xl/COPmFfCnp2Sczuwk=
 			</data>
 		</dict>
 		<key>Resources/de.lproj/Localizable.strings</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			glUWRUwAtWnC9cXyTnREr0JwRmbLcqqGg6W2Vci69uc=
+			q8Kthncg5egeyLeGZPGVUf2LcKCyE6QurE4IjMN+lJg=
 			</data>
 			<key>optional</key>
 			<true/>
@@ -116,7 +134,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			bE/hESWO13BJ+lTWh636LwFhSzSX+qvbl5hXdFm4Pzg=
+			cp+q+rvbz7amTj+B/FqVG55lEsr17wq5KEBL4nCBuXo=
 			</data>
 			<key>optional</key>
 			<true/>
@@ -130,11 +148,29 @@
 			<key>optional</key>
 			<true/>
 		</dict>
+		<key>Resources/es.lproj/Localizable.strings</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			O7W0zmfjDa73UK2oO6iErAAQLV8BakrBlzYA+JU70QU=
+			</data>
+			<key>optional</key>
+			<true/>
+		</dict>
+		<key>Resources/es.lproj/Localizable.stringsdict</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			CeR4ie0+4lxTBuwPCDvToCnrHQOBwzV3/8u+uD91D6w=
+			</data>
+			<key>optional</key>
+			<true/>
+		</dict>
 		<key>Resources/fr.lproj/Localizable.strings</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			uk+ybBHey6uXrTBXVGUIy4ZbIcWA2+fWuDDxHtkowM4=
+			KHEdLScpYAu2ou5y1TvV3AnBz3+w2rrvLQwDBfqymUk=
 			</data>
 			<key>optional</key>
 			<true/>
