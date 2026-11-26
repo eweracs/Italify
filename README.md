@@ -1,10 +1,10 @@
 # Italify
 
-**A jump start for your italics.** Italify is a [Glyphs](https://glyphsapp.com)
-plugin that algorithmically corrects obliques: it fixes the curve
-deformation, diagonal contrast shifts and anchor drift a mechanical slant
-introduces, so a slanted master becomes a starting point you can actually
-work with.
+**A jump start for your italics.**
+
+Italify is a purely geometry-based approach for *really good* synthetic obliques. No AI, no funny stuff.
+
+Runs in [Glyphs](https://glyphsapp.com)
 
 - **Website & interactive demos:** [sebastiancarewe.com/italify](https://www.sebastiancarewe.com/italify)
 - **Licensing:** [sebastiancarewe.com/italify/buy](https://www.sebastiancarewe.com/italify/buy)
