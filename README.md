@@ -4,7 +4,7 @@
 
 Italify is a purely geometry-based approach for *really good* synthetic obliques. No AI, no funny stuff.
 
-Runs in [Glyphs](https://glyphsapp.com)
+Runs in [Glyphs](https://glyphsapp.com).
 
 - **Website & interactive demos:** [sebastiancarewe.com/italify](https://www.sebastiancarewe.com/italify)
 - **Licensing:** [sebastiancarewe.com/italify/buy](https://www.sebastiancarewe.com/italify/buy)
