@@ -48,7 +48,7 @@ __all__ = [
     # reads
     "diagonal_ids", "corners", "extras", "is_corrupted", "is_flipped",
     "anchored_edge", "hinge_corners", "linked_nodes", "linked_anchors",
-    "curve_extension", "has_no_curve_correction", "has_inktrap", "snap_y", "terminal",
+    "fix_point", "curve_flow", "has_no_curve_correction", "has_inktrap", "terminal",
     "terminal_angle", "terminal_position",
     # diagonal objects
     "diagonal", "diagonals",
@@ -59,7 +59,7 @@ __all__ = [
     # extras
     "add_extras", "remove_extras",
     # tag flags
-    "set_curve_extension", "set_no_curve_correction", "set_inktrap", "set_snap_y", "set_terminal",
+    "set_fix_point", "set_curve_flow", "set_no_curve_correction", "set_inktrap", "set_terminal",
     "set_terminal_angle", "set_terminal_position",
     # anchor links
     "link_anchor", "unlink_anchor",
@@ -207,11 +207,20 @@ def linked_anchors(node):
     return list(_api.linkedAnchorsForNode_(node))
 
 
-def curve_extension(node):
-    """The node’s effective curve-extension ratio in [0, 1]: 0.0 limits
-    the curve (no extension; also what a legacy ``italify.limitCurve``
-    flag in an old file reads as), 1.0 when untagged (full extension)."""
-    return float(_api.curveExtensionForNode_(node))
+def fix_point(node):
+    """The node’s Fix Point amount in [0, 1]: how much it is held back from
+    the correction – 0.0 when it carries none, 1.0 fully fixed (what Limit
+    Curve was)."""
+    return float(_api.fixPointForNode_(node))
+
+
+def curve_flow(node):
+    """The corner’s Curve Flow setting in degrees – how far the tangent the
+    curve’s next extreme is derived from is turned from the drawn one
+    (positive steeper: the extreme comes closer) – or None when it carries
+    none."""
+    value = _api.curveFlowForNode_(node)
+    return None if value is None else float(value)
 
 
 def has_no_curve_correction(node):
@@ -224,12 +233,6 @@ def has_inktrap(node):
     """Whether ``node`` carries the Inktrap flag (set on both on-curve
     endpoints of the straight length-preserving segment)."""
     return bool(_api.hasInktrapForNode_(node))
-
-
-def snap_y(node):
-    """Whether ``node`` carries the Y-Snap tag (retains its y through the
-    correction)."""
-    return bool(_api.hasSnapYForNode_(node))
 
 
 def terminal(node):
@@ -313,12 +316,21 @@ def remove_extras(layer, nodes, all_masters=False, strict=None):
 
 # -- Tag flags ---------------------------------------------------------
 
-def set_curve_extension(layer, node, ratio, all_masters=False, strict=None):
-    """Store a curve-extension ratio in [0, 1] on ``node``: 0 limits the
-    curve (no extension – the tool’s Toggle Limit Curve), 1 removes the
-    override (the default full extension). See the curve-centre control
-    in the tool."""
-    return _wrap(_api.setCurveExtensionOnLayer_node_ratio_allMasters_(layer, node, float(ratio), all_masters), strict)
+def set_fix_point(layer, node, amount, all_masters=False, strict=None):
+    """Store a Fix Point amount in [0, 1] on ``node``: 1 fixes it fully (the
+    tool’s Fix Point), 0 removes it (Release Fixed Point), anything between
+    blends the free and the fixed correction (the tool’s Fix Point knob).
+    Refuses with ``notFixPointNode`` on a node beside no curve or a smooth
+    node between two curves; removing works on any node."""
+    return _wrap(_api.setFixPointOnLayer_node_amount_allMasters_(layer, node, float(amount), all_masters), strict)
+
+
+def set_curve_flow(layer, node, degrees, all_masters=False, strict=None):
+    """Store a Curve Flow setting in degrees on the corner ``node``
+    (positive steeper: the derived extreme comes closer); None removes it
+    (Reset Curve Flow). See Curve Flow in the tool."""
+    value = None if degrees is None else float(degrees)
+    return _wrap(_api.setCurveFlowOnLayer_node_degrees_allMasters_(layer, node, value, all_masters), strict)
 
 
 def set_no_curve_correction(layer, node_a, node_b, on, all_masters=False, strict=None):
@@ -333,15 +345,6 @@ def set_inktrap(layer, node_a, node_b, on, all_masters=False, strict=None):
     ``node_b`` (directly-connected, unsmooth on-curve endpoints)."""
     return _wrap(
         _api.setInktrapOnLayer_nodeA_nodeB_on_allMasters_(layer, node_a, node_b, on, all_masters),
-        strict,
-    )
-
-
-def set_snap_y(layer, node, retain, all_masters=False, strict=None):
-    """Set or remove the Y-Snap tag on ``node``: ``retain=True`` keeps its
-    y through the correction, ``False`` (or ``None``) removes the tag."""
-    return _wrap(
-        _api.setSnapYOnLayer_node_retain_allMasters_(layer, node, bool(retain), all_masters),
         strict,
     )
 

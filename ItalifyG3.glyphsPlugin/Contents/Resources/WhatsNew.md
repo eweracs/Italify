@@ -17,6 +17,24 @@ See RELEASING.md.
 
 ## [Unreleased]
 
+## [0.36.0] – 2026-11-27
+
+### Changed
+
+- **Completely reworked curve extension pipeline.** This greatly improves
+  handling of curves not ending on extremes, with more intuitive control.
+  See below for more details.
+- **Limit Curve and Y-Snap are now Fix Point.** Select a curve corner, or a smooth node
+  where a curve meets a straight line, and choose *Fix Point* from the
+  context menu (`F`), then choose as a percentage how much the point should
+  stay fixed. Default: 100 % – the point doesn’t move.
+- **Custom Curve Extension is now Curve Flow.** Select a curve corner to
+  adjust how strongly this curve is transformed, either by turning the
+  attached dial or adjusting the line indicating the bounds.
+- **Python scripts:** the curve extension functions are replaced by ones
+  for Fix Point and Curve Flow, and the Y-Snap functions are gone – see
+  the Python API page.
+
 ## [0.35.0] – 2026-11-19
 
 ### Added
